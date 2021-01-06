@@ -108,8 +108,74 @@ The associations can be described like this:
 
 ### Migrate the database
 
+```sh
+npx sequelize db:migrate
+```
+
+
+#### (optional) How to change the table name
+
+1. undo all migrations
+2. change the Hero migration (to fix the spelling of the table name)
+3. tell the model the new name of the table
+
+```sh
+npx sequelize db:migrate:undo:all
+```
+
+```js
+  Hero.init({
+    name: DataTypes.STRING
+  }, {
+    sequelize,
+    modelName: 'Hero',
+    tableName: 'Heroes'
+  });
+```
+
+
 ### Create seed data for Heroes and Sidekicks
 
+```sh
+npx sequelize seed:generate --name add-hero-data
+npx sequelize seed:generate --name add-sidekick-data
+```
+
+#### Fill out the `up` and `down` functions
+
+When calling `queryInterface.bulkInsert()`, pass it three args:
+
+1. the name of the table
+2. an array of objects
+3. an empty options object
+
+When calling `queryInterface.bulkDelete()`, pass it one arg:
+
+1. the name of the table
+
 ### Migrate the seed data
+
+```sh
+npx sequelize db:seed:all
+```
+
+#### HOW TO DELETE ALL DATA IN YOUR TABLES
+
+Be very careful with this!
+Never, ever, ever run these commands on your live/production site.
+
+It will delete any data your real users have provided.
+
+
+Undo all your seed data, and then redo it!
+
+```sh
+npx sequelize db:seed:undo:all
+npx sequelize db:seed:all
+```
+
+
+
+
 
 ## Call Sequelize Models from Controllers functions!
