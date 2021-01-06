@@ -36,11 +36,18 @@ app.use(session({
 app.engine('html', es6Renderer);
 app.set('views', 'templates');
 app.set('view engine', 'html');
-
+const { Hero } = require('./models')
 
 app.get('/', (req, res) =>{
     res.send('Hello World')
 });
+
+app.get('/list', async (req,res)=>{
+    const heroes = await Hero.findAll()
+    console.log(JSON.stringify(heroes, null, 4));
+    res.json(heroes)
+    //res.send("Hero Section")
+})
 
 //catch all if website doesn't
 app.get('*', (req, res) => {
