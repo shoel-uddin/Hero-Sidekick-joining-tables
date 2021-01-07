@@ -67,12 +67,13 @@ app.get('/hero/:id/sidekick', async (req, res) =>{
     const { id } = req.params;
     const hero = await Hero.findByPk(id)
     const sidekicks = await Sidekick.findAll({
-        where : {
-            heroId: {
-               [Op.eq] : null  //eq (=equalTo), ne (!=notEqual)
-            }
+        // This code is to remove the sidekick once it's been selected!
+        // where : {
+        //     heroId: {
+        //        [Op.eq] : null  //eq (=equalTo), ne (!=notEqual)
+        //     }
             
-        },
+        // },
         order: [
             ['name', 'asc']
         ]
