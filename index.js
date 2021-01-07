@@ -36,6 +36,8 @@ app.use(session({
 app.engine('html', es6Renderer);
 app.set('views', 'templates');
 app.set('view engine', 'html');
+
+const { Op } = require('sequelize')
 const { Hero, Sidekick } = require('./models');
 
 const { layout } = require('./utils');
@@ -65,6 +67,12 @@ app.get('/hero/:id/sidekick', async (req, res) =>{
     const { id } = req.params;
     const hero = await Hero.findByPk(id)
     const sidekicks = await Sidekick.findAll({
+        where : {
+            heroId: {
+               [Op.eq] : null  //eq (=equalTo), ne (!=notEqual)
+            }
+            
+        },
         order: [
             ['name', 'asc']
         ]
