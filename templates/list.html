@@ -1,0 +1,20 @@
+${header}
+<h1>All Heros!</h1>
+<ul>
+    ${
+        heroes.map(h => `
+
+        <li>
+            <a href="/hero/${h.id}/sidekick">
+                ${h.name}
+            </a>
+
+            ${
+                h.Sidekick ? h.Sidekick.name : ''
+            }
+        </li>
+        
+        `).join('')
+    }
+</ul>
+${footer}

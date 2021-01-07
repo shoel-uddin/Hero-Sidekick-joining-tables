@@ -12,7 +12,7 @@ const server = http.createServer(app);
 
 
 const logger = morgan('dev');
-const HOST = '0.0.0.0';
+const HOST = 'localhost';
 const PORT = 3500
 
 //Register Middleware
@@ -36,18 +36,59 @@ app.use(session({
 app.engine('html', es6Renderer);
 app.set('views', 'templates');
 app.set('view engine', 'html');
-const { Hero } = require('./models')
+const { Hero, Sidekick } = require('./models');
+
+const { layout } = require('./utils');
 
 app.get('/', (req, res) =>{
     res.send('Hello World')
 });
 
 app.get('/list', async (req,res)=>{
-    const heroes = await Hero.findAll()
+    const heroes = await Hero.findAll({
+        include: Sidekick,
+        order: [
+            ['name', 'asc']
+        ]
+    })
     console.log(JSON.stringify(heroes, null, 4));
-    res.json(heroes)
-    //res.send("Hero Section")
+    //res.json(heroes)
+    res.render('list', {
+        locals: {
+            heroes,
+        },
+        ...layout
+    })
 })
+
+app.get('/hero/:id/sidekick', async (req, res) =>{
+    const { id } = req.params;
+    const hero = await Hero.findByPk(id)
+    const sidekicks = await Sidekick.findAll({
+        order: [
+            ['name', 'asc']
+        ]
+    })
+    console.log(JSON.stringify(sidekicks, null, 4));
+    res.render('form', {
+        locals: {
+            hero,
+            sidekicks
+        },
+        ...layout
+    })
+})
+
+app.post('/hero/:id/sidekick', async (req,res)=>{
+    const { id } = req.params;
+    const { sidekickId } = req.body;
+
+    const hero = await Hero.findByPk(id);
+    await hero.setSidekick(sidekickId);
+    await hero.save();
+
+    res.redirect('/list')
+});
 
 //catch all if website doesn't
 app.get('*', (req, res) => {
